@@ -43,3 +43,6 @@ This Python script combines Spotify API integration with encoding and decoding m
    Exit (Option 4):
    
    Exit the program.
+
+## License
+   This project is licensed under the [MIT License]([https://github.com](https://opensource.org/license/mit)https://opensource.org/license/mit).
