@@ -58,25 +58,17 @@ def generate_random_word(length=8):
     return ''.join(random.choice(string.ascii_lowercase) for _ in range(length))
 
 # Function to convert a message to ASCII English alphabets with a password
-def message_to_ascii_alphabets(message, password, salt_seed):
+def message_to_ascii_alphabets(message, password):
     random.seed(password)
-    return [chr((ord(char) + random.randint(1, 26)) % 26 + ord('A')) if char != ' ' else ' ' for char in message.upper()] + [chr((salt_seed + 1) % 26 + ord('A'))]  # Use salt seed in a way that allows proper decoding
+    return [chr((ord(char) + random.randint(1, 26)) % 26 + ord('A')) if char != ' ' else ' ' for char in message.upper()]
 
 # Function to convert ASCII English alphabets to characters
-def ascii_alphabets_to_message(ascii_alphabets, salt_seed):
-    try:
-        message = ''.join(ascii_alphabets[:-1])  # Exclude the salt seed
-        return ''.join([chr((ord(char) - (salt_seed + 1)) % 26 + ord('A')) if char != ' ' else ' ' for char in message.upper()])
-
-    except Exception as e:
-        print(f"Error converting ASCII alphabets to message: {e}")
-        return None
-
-
+def ascii_alphabets_to_message(ascii_alphabets):
+    return ''.join(ascii_alphabets)
 
 # Function to embed ASCII English alphabets into playlist description
 def embed_ascii_alphabets(sp, playlist_id, ascii_alphabets):
-    playlist_description = ''.join(ascii_alphabets[:-1])  # Exclude the salt seed
+    playlist_description = ''.join(ascii_alphabets)
     try:
         sp.playlist_change_details(playlist_id, description=playlist_description)
 
@@ -112,14 +104,8 @@ def encode_ascii_alphabets(sp, message):
         user_info = sp.current_user()
         user_id = user_info['id']
         user_password = input("Enter the user-input part of the password: ")
-
-        # Salting the message
-        salt_seed = random.randint(1, 1000)
-        print(f"Salt seed for encoding: {salt_seed}")
-        salted_message = message + str(salt_seed)
-
         password = STATIC_PASSWORD + user_password
-        ascii_alphabets = message_to_ascii_alphabets(salted_message, password, salt_seed)
+        ascii_alphabets = message_to_ascii_alphabets(message, password)
         playlist_name = generate_inconspicuous_playlist_name()
         playlist = sp.user_playlist_create(user=user_id, name=playlist_name)
         add_user_recommended_tracks_to_playlist(sp, playlist['id'])
@@ -132,20 +118,19 @@ def encode_ascii_alphabets(sp, message):
 # Function to decode a message from a playlist with a static and user-input part of the password
 def decode_ascii_alphabets(sp, playlist_id):
     try:
-        # Fetch playlist details after getting the password and salt seed
-        salt_seed = int(input("Enter the salt seed for decoding: "))
+
+        # Fetch playlist details after getting the password
         playlist_details = sp.playlist(playlist_id)
         playlist_description = playlist_details.get('description', '')
         ascii_alphabets = list(playlist_description)
-
-        # Unsalt the message
-        decoded_message = ascii_alphabets_to_message(ascii_alphabets[:-1], salt_seed)
+        decoded_message = ascii_alphabets_to_message(ascii_alphabets)
         print(f'Fetched Message: {decoded_message}')
         return decoded_message
 
     except Exception as e:
         print(f"Error decoding message: {e}")
         return None
+
 
 # Function to convert the decoded message back to the encoded message using the password
 def convert_decoded_to_encoded(decoded_message):
