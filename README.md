@@ -21,3 +21,11 @@ This Python script combines Spotify API integration with encoding and decoding m
 3. **Install Dependencies:**
    ```bash
    pip install spotipy
+
+## Usage
+   Run the script using the following command:
+   
+   bash
+   Copy code
+   python main.py
+   Enter your Spotify username and follow the menu options.
