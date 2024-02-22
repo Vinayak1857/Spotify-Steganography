@@ -29,3 +29,17 @@ This Python script combines Spotify API integration with encoding and decoding m
    Copy code
    python main.py
    Enter your Spotify username and follow the menu options.
+
+## Menu Options
+   Encode a Message (Option 1):
+
+   Enter a message to encode, and follow the prompts to create a Spotify playlist with the encoded message.
+   Decode a Message (Option 2):
+
+   Enter the playlist ID to decode the message hidden in the playlist's description.
+   Deauthenticate User (Option 3):
+
+   Deauthenticate the user from the Spotify API.
+   Exit (Option 4):
+   
+   Exit the program.
